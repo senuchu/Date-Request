@@ -1,0 +1,8 @@
+{
+  "name": "date-request",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node api/response.js"
+  },
+  "dependencies": {}
+}
