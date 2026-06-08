@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Date Request 🌸</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Georgia, serif; }
+    body { background: #fce4ec; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 2rem 1rem; position: relative; overflow-x: hidden; }
+    .petal { position: fixed; font-size: 1.4rem; pointer-events: none; animation: floaty 7s ease-in-out infinite; opacity: 0.35; z-index: 0; }
+    @keyframes floaty { 0%,100%{transform:translateY(0) rotate(-8deg);}50%{transform:translateY(-28px) rotate(8deg);} }
+    .card { background: rgba(255,255,255,0.93); border-radius: 28px; padding: 2rem 1.75rem; width: 100%; max-width: 440px; border: 2px solid #f8bbd0; text-align: center; position: relative; z-index: 10; margin-top: 1rem; }
+    .back-btn { position: absolute; top: 1rem; left: 1rem; background: #fce4ec; border: 1.5px solid #f48fb1; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; color: #c2185b; transition: background 0.2s; z-index: 20; }
+    .back-btn:hover { background: #f8bbd0; }
+    .bear { font-size: 4.5rem; display: block; animation: bop 2s ease-in-out infinite; }
+    @keyframes bop { 0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);} }
+    .big-title { font-size: 1.45rem; color: #c2185b; font-weight: 700; margin: 0.5rem 0 0.3rem; }
+    .sub { font-size: 0.9rem; color: #e91e8c; margin-bottom: 1.5rem; min-height: 1.2rem; }
+    .btn-wrap { position: relative; min-height: 70px; display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: nowrap; margin-top: 0.5rem; }
+    .yes-btn { background: #e91e8c; color: #fff; border: none; border-radius: 50px; padding: 0.75rem 2.2rem; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: Georgia,serif; transition: transform 0.15s,background 0.2s; z-index: 2; flex-shrink: 0; }
+    .yes-btn:hover { background: #c2185b; transform: scale(1.07); }
+    .no-btn { background: #fff; color: #e91e8c; border: 2px solid #f48fb1; border-radius: 50px; padding: 0.7rem 1.8rem; font-size: 1rem; cursor: pointer; font-family: Georgia,serif; white-space: nowrap; z-index: 2; flex-shrink: 0; }
+    .step-title { font-size: 1.1rem; color: #c2185b; font-weight: 700; margin-bottom: 0.3rem; }
+    .step-sub { font-size: 0.82rem; color: #e91e8c; margin-bottom: 1.2rem; }
+    .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; }
+    .mnav-btn { background: #fce4ec; border: 1.5px solid #f48fb1; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; color: #c2185b; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; font-family: Georgia,serif; }
+    .mnav-title { font-size: 0.9rem; font-weight: 700; color: #c2185b; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; margin-bottom: 0.8rem; }
+    .cal-h { font-size: 0.68rem; color: #f48fb1; text-align: center; font-weight: 700; padding: 3px 0; }
+    .cal-d { border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; cursor: pointer; color: #880e4f; border: 1.5px solid transparent; transition: all .15s; margin: auto; }
+    .cal-d:hover { background: #fce4ec; border-color: #f48fb1; }
+    .cal-d.sel { background: #e91e8c; color: #fff; border-color: #e91e8c; }
+    .cal-d.today { border-color: #f48fb1; font-weight: 700; }
+    .cal-d.empty,.cal-d.past { cursor: default; color: #f8bbd0; }
+    .option-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; margin-bottom: 0.5rem; }
+    .opt-card { background: #fff0f5; border: 2px solid #f8bbd0; border-radius: 16px; padding: 0.7rem 0.5rem; cursor: pointer; transition: all .15s; text-align: center; }
+    .opt-card:hover { border-color: #e91e8c; background: #fce4ec; }
+    .opt-card.picked { border-color: #e91e8c; background: #fce4ec; }
+    .opt-icon { font-size: 1.6rem; display: block; margin-bottom: 3px; }
+    .opt-label { font-size: 0.78rem; color: #c2185b; font-weight: 700; }
+    .time-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 7px; margin-bottom: 0.5rem; }
+    .time-chip { background: #fff0f5; border: 2px solid #f8bbd0; border-radius: 50px; padding: 0.5rem 0.3rem; font-size: 0.78rem; color: #c2185b; cursor: pointer; text-align: center; font-weight: 700; transition: all .15s; font-family: Georgia,serif; }
+    .time-chip:hover { border-color: #e91e8c; background: #fce4ec; }
+    .time-chip.picked { border-color: #e91e8c; background: #e91e8c; color: #fff; }
+    .next-btn { background: #e91e8c; color: #fff; border: none; border-radius: 50px; padding: 0.7rem 0; font-size: 0.95rem; font-weight: 700; cursor: pointer; width: 100%; margin-top: 0.75rem; font-family: Georgia,serif; transition: background .2s; }
+    .next-btn:hover { background: #c2185b; }
+    .next-btn:disabled { background: #f8bbd0; cursor: default; }
+    .summary-row { display: flex; align-items: flex-start; gap: 10px; padding: 0.6rem 0; border-bottom: 1px dashed #f8bbd0; text-align: left; }
+    .summary-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
+    .summary-label { font-size: 0.75rem; color: #e91e8c; font-weight: 700; }
+    .summary-val { font-size: 0.9rem; color: #880e4f; margin-top: 2px; }
+    .pop { animation: popIn .4s ease; }
+    @keyframes popIn { 0%{transform:scale(.5);opacity:0;}80%{transform:scale(1.08);}100%{transform:scale(1);opacity:1;} }
+    .hidden { display: none !important; }
+    .reply-yes { flex:1; background:#e91e8c; color:#fff; border:none; border-radius:50px; padding:0.7rem 0; font-size:0.9rem; font-weight:700; cursor:pointer; font-family:Georgia,serif; transition:background .2s; }
+    .reply-yes:hover { background:#c2185b; }
+    .reply-no { flex:1; background:#fff; color:#e91e8c; border:2px solid #f48fb1; border-radius:50px; padding:0.7rem 0; font-size:0.9rem; font-weight:700; cursor:pointer; font-family:Georgia,serif; }
+    .result-banner { background:#fff0f5; border:2px solid #f8bbd0; border-radius:18px; padding:1.2rem 1rem; margin-top:1rem; text-align:center; }
+    .result-emoji { font-size:3rem; display:block; margin-bottom:0.5rem; }
+    .result-title { font-size:1.1rem; color:#c2185b; font-weight:700; }
+    .result-sub { font-size:0.85rem; color:#e91e8c; margin-top:0.3rem; }
+  </style>
+</head>
+<body>
+
+  <span class="petal" style="top:4%;left:7%;animation-delay:0s">🌸</span>
+  <span class="petal" style="top:8%;left:80%;animation-delay:1.2s">💕</span>
+  <span class="petal" style="top:55%;left:3%;animation-delay:2s">🌸</span>
+  <span class="petal" style="top:60%;left:90%;animation-delay:.6s">💗</span>
+  <span class="petal" style="top:30%;left:93%;animation-delay:1.8s">🌸</span>
+  <span class="petal" style="top:78%;left:10%;animation-delay:2.4s">💕</span>
+  <span class="petal" style="top:90%;left:50%;animation-delay:3s">🌸</span>
+  <span class="petal" style="top:20%;left:2%;animation-delay:1s">💗</span>
+
+  <div class="card">
+
+    <!-- S1: ASK -->
+    <div id="s1">
+      <span class="bear">🐻</span>
+      <div class="big-title">Will you go on a date with me? 🌸</div>
+      <div class="sub" id="sub1">Pretty please? 🥺</div>
+      <div class="btn-wrap">
+        <button class="yes-btn" onclick="goS2()">Yes! 💕</button>
+        <button class="no-btn" id="nobtn" onmouseenter="flee()" onclick="flee()">No</button>
+      </div>
+    </div>
+
+    <!-- S2: CALENDAR -->
+    <div id="s2" class="hidden">
+      <button class="back-btn" onclick="goBack('s1')">←</button>
+      <div class="step-title pop">Yayy!! 🎉</div>
+      <div class="step-sub">When works for you? Pick a day!</div>
+      <div class="month-nav">
+        <button class="mnav-btn" onclick="chMonth(-1)">‹</button>
+        <span class="mnav-title" id="mTitle"></span>
+        <button class="mnav-btn" onclick="chMonth(1)">›</button>
+      </div>
+      <div class="cal-grid" id="calHdr"></div>
+      <div class="cal-grid" id="calDays"></div>
+      <button class="next-btn" id="calNext" onclick="goS3()" disabled>Pick a day first 🌸</button>
+    </div>
+
+    <!-- S3: TIME -->
+    <div id="s3" class="hidden">
+      <button class="back-btn" onclick="goBack('s2')">←</button>
+      <div class="step-title pop">Great choice! 🗓️</div>
+      <div class="step-sub">What time works best?</div>
+      <div class="time-grid">
+        <div class="time-chip" onclick="pickTime(this,'Morning ☀️')">Morning ☀️</div>
+        <div class="time-chip" onclick="pickTime(this,'Afternoon 🌤️')">Afternoon 🌤️</div>
+        <div class="time-chip" onclick="pickTime(this,'Evening 🌆')">Evening 🌆</div>
+        <div class="time-chip" onclick="pickTime(this,'Night 🌙')">Night 🌙</div>
+        <div class="time-chip" onclick="pickTime(this,'Surprise me! 🎲')">Surprise me! 🎲</div>
+        <div class="time-chip" onclick="pickTime(this,'All day 💫')">All day 💫</div>
+      </div>
+      <button class="next-btn" id="timeNext" onclick="goS4()" disabled>Choose a time 🌸</button>
+    </div>
+
+    <!-- S4: FOOD -->
+    <div id="s4" class="hidden">
+      <button class="back-btn" onclick="goBack('s3')">←</button>
+      <div class="step-title pop">Now the important stuff 🍽️</div>
+      <div class="step-sub">What food are you feeling?</div>
+      <div class="option-grid">
+        <div class="opt-card" onclick="pickFood(this,'Italian 🍝')"><span class="opt-icon">🍝</span><span class="opt-label">Italian</span></div>
+        <div class="opt-card" onclick="pickFood(this,'Korean BBQ 🥩')"><span class="opt-icon">🥩</span><span class="opt-label">Korean BBQ</span></div>
+        <div class="opt-card" onclick="pickFood(this,'Sushi 🍣')"><span class="opt-icon">🍣</span><span class="opt-label">Sushi</span></div>
+        <div class="opt-card" onclick="pickFood(this,'Pizza 🍕')"><span class="opt-icon">🍕</span><span class="opt-label">Pizza</span></div>
+        <div class="opt-card" onclick="pickFood(this,'Cafe & Dessert ☕')"><span class="opt-icon">☕</span><span class="opt-label">Cafe & Dessert</span></div>
+        <div class="opt-card" onclick="pickFood(this,'Surprise me! 🎲')"><span class="opt-icon">🎲</span><span class="opt-label">Surprise me!</span></div>
+      </div>
+      <button class="next-btn" id="foodNext" onclick="goS5()" disabled>Choose food 🌸</button>
+    </div>
+
+    <!-- S5: VIBE -->
+    <div id="s5" class="hidden">
+      <button class="back-btn" onclick="goBack('s4')">←</button>
+      <div class="step-title pop">What's the vibe? ✨</div>
+      <div class="step-sub">Pick what you'd love to do!</div>
+      <div class="option-grid">
+        <div class="opt-card" onclick="pickVibe(this,'Movie night 🎬')"><span class="opt-icon">🎬</span><span class="opt-label">Movie night</span></div>
+        <div class="opt-card" onclick="pickVibe(this,'Walk & talk 🌳')"><span class="opt-icon">🌳</span><span class="opt-label">Walk & talk</span></div>
+        <div class="opt-card" onclick="pickVibe(this,'Picnic 🧺')"><span class="opt-icon">🧺</span><span class="opt-label">Picnic</span></div>
+        <div class="opt-card" onclick="pickVibe(this,'Bowling 🎳')"><span class="opt-icon">🎳</span><span class="opt-label">Bowling</span></div>
+        <div class="opt-card" onclick="pickVibe(this,'Rooftop chill 🌃')"><span class="opt-icon">🌃</span><span class="opt-label">Rooftop chill</span></div>
+        <div class="opt-card" onclick="pickVibe(this,'Anything with you 💕')"><span class="opt-icon">💕</span><span class="opt-label">Anything with you</span></div>
+      </div>
+      <button class="next-btn" id="vibeNext" onclick="goS6()" disabled>Choose vibe 🌸</button>
+    </div>
+
+    <!-- S6: SUMMARY + REPLY -->
+    <div id="s6" class="hidden">
+      <button class="back-btn" onclick="goBack('s5')">←</button>
+      <span class="bear" style="font-size:3.2rem">🥰</span>
+      <div class="big-title pop" style="margin-bottom:0.2rem">It's a date!! 💗</div>
+      <div style="font-size:0.82rem;color:#e91e8c;margin-bottom:1rem;">Here's our plan 🌸</div>
+      <div style="background:#fff0f5;border-radius:18px;padding:1rem;border:1.5px solid #f8bbd0;text-align:left;margin-bottom:1.2rem;">
+        <div class="summary-row"><span class="summary-icon">🗓️</span><div><div class="summary-label">Date</div><div class="summary-val" id="sumDate"></div></div></div>
+        <div class="summary-row"><span class="summary-icon">🕐</span><div><div class="summary-label">Time</div><div class="summary-val" id="sumTime"></div></div></div>
+        <div class="summary-row"><span class="summary-icon">🍽️</span><div><div class="summary-label">Food</div><div class="summary-val" id="sumFood"></div></div></div>
+        <div class="summary-row" style="border-bottom:none"><span class="summary-icon">✨</span><div><div class="summary-label">Activity</div><div class="summary-val" id="sumVibe"></div></div></div>
+      </div>
+      <div style="font-size:0.82rem;color:#c2185b;font-weight:700;margin-bottom:0.6rem;">Send your reply! 💌</div>
+      <div style="display:flex;gap:8px;">
+        <button class="reply-yes" onclick="sendReply('yes')">I'm in! 💕</button>
+        <button class="reply-no" onclick="sendReply('no')">Maybe later 🙈</button>
+      </div>
+    </div>
+
+    <!-- S7: YES -->
+    <div id="s7yes" class="hidden">
+      <span class="bear" style="font-size:4rem">🥳</span>
+      <div class="big-title pop">Yesss!! 💗🎉</div>
+      <div class="result-banner">
+        <span class="result-emoji">💕</span>
+        <div class="result-title">It's officially happening!!</div>
+        <div class="result-sub">Get ready for the best date ever 🌸✨</div>
+      </div>
+      <div style="margin-top:1rem;font-size:0.82rem;color:#f48fb1;">Can't wait!! 🥰</div>
+    </div>
+
+    <!-- S7: NO -->
+    <div id="s7no" class="hidden">
+      <span class="bear" style="font-size:4rem">🥺</span>
+      <div class="big-title pop" style="font-size:1.1rem;">Aww okay... maybe next time 🌸</div>
+      <div class="result-banner">
+        <span class="result-emoji">💌</span>
+        <div class="result-title">The offer stands forever!</div>
+        <div class="result-sub">Whenever you're ready, I'll be here 🐻💕</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    var noX=0,noY=0,noClicks=0;
+    var selDate=null,selTime=null,selFood=null,selVibe=null;
+    var vY,vM;
+    var now=new Date();
+    vY=now.getFullYear(); vM=now.getMonth();
+    var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var DAYS=['Su','Mo','Tu','We','Th','Fr','Sa'];
+    var noMsgs=["Are you sure? 🥺","Please reconsider! 💕","Come on... 🌸","I promise it'll be fun!","Don't do this 🐻","Just say YES!! 💗"];
+
+    function flee(){
+      noClicks++;
+      var b=document.getElementById('nobtn');
+      noX+=((Math.random()>0.5?1:-1)*(30+Math.random()*55));
+      noY+=((Math.random()>0.5?1:-1)*(10+Math.random()*25));
+      noX=Math.max(-90,Math.min(90,noX));
+      noY=Math.max(-30,Math.min(30,noY));
+      b.style.transform='translate('+noX+'px,'+noY+'px)';
+      var s=document.getElementById('sub1');
+      if(noClicks<=noMsgs.length) s.textContent=noMsgs[noClicks-1];
+    }
+
+    function show(id){
+      ['s1','s2','s3','s4','s5','s6','s7yes','s7no'].forEach(function(x){
+        document.getElementById(x).classList.add('hidden');
+      });
+      document.getElementById(id).classList.remove('hidden');
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function goBack(id){ show(id); if(id==='s2') renderCal(); }
+    function goS2(){ show('s2'); renderCal(); }
+    function goS3(){ show('s3'); }
+    function goS4(){ show('s4'); }
+    function goS5(){ show('s5'); }
+    function goS6(){
+      document.getElementById('sumDate').textContent=MONTHS[selDate.m]+' '+selDate.d+', '+selDate.y;
+      document.getElementById('sumTime').textContent=selTime;
+      document.getElementById('sumFood').textContent=selFood;
+      document.getElementById('sumVibe').textContent=selVibe;
+      show('s6');
+    }
+
+    function sendReply(r){
+      var body={answer:r};
+      if(r==='yes'){
+        body.date=MONTHS[selDate.m]+' '+selDate.d+', '+selDate.y;
+        body.time=selTime; body.food=selFood; body.activity=selVibe;
+      }
+      fetch('/api/response',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).catch(function(){});
+      show(r==='yes'?'s7yes':'s7no');
+    }
+
+    function chMonth(d){
+      vM+=d;
+      if(vM>11){vM=0;vY++;} if(vM<0){vM=11;vY--;}
+      renderCal();
+    }
+
+    function renderCal(){
+      var h=document.getElementById('calHdr'); h.innerHTML='';
+      DAYS.forEach(function(d){ var e=document.createElement('div'); e.className='cal-h'; e.textContent=d; h.appendChild(e); });
+      var g=document.getElementById('calDays'); g.innerHTML='';
+      document.getElementById('mTitle').textContent=MONTHS[vM]+' '+vY;
+      var first=new Date(vY,vM,1).getDay();
+      var dim=new Date(vY,vM+1,0).getDate();
+      for(var i=0;i<first;i++){ var e=document.createElement('div'); e.className='cal-d empty'; g.appendChild(e); }
+      for(var d=1;d<=dim;d++){
+        var e=document.createElement('div');
+        var past=(vY<now.getFullYear())||(vY===now.getFullYear()&&vM<now.getMonth())||(vY===now.getFullYear()&&vM===now.getMonth()&&d<now.getDate());
+        var isToday=(vY===now.getFullYear()&&vM===now.getMonth()&&d===now.getDate());
+        var isSel=selDate&&selDate.d===d&&selDate.m===vM&&selDate.y===vY;
+        e.className='cal-d'+(past?' past':'')+(isToday?' today':'')+(isSel?' sel':'');
+        e.textContent=d;
+        if(!past){(function(dd){ e.onclick=function(){ pickDay(dd); }; })(d);}
+        g.appendChild(e);
+      }
+    }
+
+    function pickDay(d){
+      selDate={d:d,m:vM,y:vY}; renderCal();
+      var b=document.getElementById('calNext');
+      b.disabled=false; b.textContent=MONTHS[vM]+' '+d+' it is! 💕';
+    }
+    function pickTime(el,val){
+      document.querySelectorAll('.time-chip').forEach(function(x){x.classList.remove('picked');});
+      el.classList.add('picked'); selTime=val;
+      var b=document.getElementById('timeNext'); b.disabled=false; b.textContent='Perfect! Next 💕';
+    }
+    function pickFood(el,val){
+      document.querySelectorAll('#s4 .opt-card').forEach(function(x){x.classList.remove('picked');});
+      el.classList.add('picked'); selFood=val;
+      var b=document.getElementById('foodNext'); b.disabled=false; b.textContent='Yum! Next 💕';
+    }
+    function pickVibe(el,val){
+      document.querySelectorAll('#s5 .opt-card').forEach(function(x){x.classList.remove('picked');});
+      el.classList.add('picked'); selVibe=val;
+      var b=document.getElementById('vibeNext'); b.disabled=false; b.textContent='Love it! See the plan 💕';
+    }
+  </script>
+</body>
+</html>
